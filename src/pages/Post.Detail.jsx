@@ -1,64 +1,49 @@
-import { useEffect, useState } from "react";
-import CommentPageNation from "../components/pagenation/Pagenation.Comment";
-import { useSearchParams } from "react-router-dom";
-import UserNameRepository from "../repository/repository";
-import { useQuery } from "react-query";
-import { QUERY_KEY } from "../consts/queryKey";
-import { getCommentsApi, getPostDetailApi } from "../apis/api";
-import { LIMIT_TAKE } from "../consts/const";
+import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { QUERY_KEY } from '../consts/queryKey';
+import { getPaginationComment, getPostDetailPost } from '../apis/api';
+import useShowModal from '../hooks/useShowModal';
+import privateRouter from '../utils/privateRouter';
+import PagiNation from '../components/Pagenation';
 
 const PostDetailPage = () => {
-  const [params] = useSearchParams();
-  const [isOpenCommentList, setIsOpenCommentList] = useState(false);
+    const [params] = useSearchParams();
+    const { isOpenCommentList, onClickCommentsBtn } = useShowModal();
+    const { data: postDetailData } = useQuery([QUERY_KEY.post], () => getPostDetailPost());
+    const { data: commentData } = useQuery([QUERY_KEY.comments, params.get('page')], () =>
+        getPaginationComment(params)
+    );
+    const paginationCommentData = commentData?.Comments;
 
-  const { data: postData } = useQuery([QUERY_KEY.PostDetail], () =>
-    getPostDetailApi()
-  );
+    useEffect(() => {
+        privateRouter();
+    }, []);
 
-  const { data: commentsData } = useQuery([QUERY_KEY.Comment], () =>
-    getCommentsApi(params, LIMIT_TAKE.TWENTY)
-  );
+    useEffect(() => {
+        if (!isOpenCommentList) return;
+    }, [params]);
 
-  const onClickCommentsBtn = async () => {
-    setIsOpenCommentList((prev) => !prev);
-  };
-
-  useEffect(() => {
-    const userName = UserNameRepository.getUserName();
-    if (!userName) {
-      alert("로그인이 필요합니다");
-      window.location.href = "/";
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!isOpenCommentList) return;
-  }, [params]);
-
-  return (
-    <div>
-      <h1>Post Detail Page</h1>
-      <div>
-        <p>제목: {postData?.title}</p>
-        <p>내용: {postData?.content}</p>
-        {!isOpenCommentList ? (
-          <button onClick={onClickCommentsBtn}>댓글 보기</button>
-        ) : (
-          <button onClick={onClickCommentsBtn}>댓글 숨기기</button>
-        )}
-        {isOpenCommentList && (
-          <>
-            {commentsData?.Comments.map((comment) => (
-              <div key={comment.id}>
-                <p>{comment.content}</p>
-                <p>{comment.User.nickName}</p>
-              </div>
-            ))}
-            <CommentPageNation />
-          </>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <div>
+            <h1>Post Detail Page</h1>
+            <div>
+                <p>제목: {postDetailData?.title}</p>
+                <p>내용: {postDetailData?.content}</p>
+                <button onClick={onClickCommentsBtn}>{isOpenCommentList ? '댓글 숨기기' : '댓글 보기'}</button>
+                {isOpenCommentList && (
+                    <>
+                        {paginationCommentData?.map((comment) => (
+                            <div key={comment.id}>
+                                <p>{comment.content}</p>
+                                <p>{comment.User.nickName}</p>
+                            </div>
+                        ))}
+                        <PagiNation />
+                    </>
+                )}
+            </div>
+        </div>
+    );
 };
 export default PostDetailPage;

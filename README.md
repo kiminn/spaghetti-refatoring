@@ -1,230 +1,298 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=dfbcf7&height=200&section=header&text=mobi-3th-begginer-2&fontSize=40&fontColor=FFFFFF" />
-https://lyrical-brain-e0f.notion.site/mobi-beginner-week-3-0d1a1889390849729e292c60410a605e?pvs=4
-
-### 기간
-
-2023.12.24 ~ 2023.1.2
-
-### 페어-편성
-
-Pair-2: Kimi - Levi - Ann
-
-### 과제
-
-1. RHF를 활용하여 회원가입 토이 프로젝트 만들기 + 생각해보기 정리하기
-2. 나만의 보일러 템플릿 만들기
-3. 느슨한 관계와 의존성 주입에 대한 관계에 대한 사례 만들기
-4. 스파게티 코드 리팩터링 하기
+# 💻 Spaghetti Code Refactor
 
 ---
 
-[2023.12.26(화)]</br>
-나만의 보일러 템플릿 만들기를 해보았습니다.
+## 📌 router 분리
 
-<img width="955" alt="스크린샷 2023-12-27 오전 1 21 37" src="https://github.com/mobi-community/mobi-2th-begginer-2/assets/134191815/3b62c38c-c404-43b2-97fa-0cade66272bf">
-<p>
-mui 설치 후 useContext error가 나서 mui library를 사용하지 못하였습니다.
-공식문서를 읽어보고, 구글링도 해보았지만 해결을 하지 못했습니다.
-전에 프로젝트 진행할 때도 같은 issue가 있어서 chakra library를 사용했었는데,
-왜 이런 오류가 나는지 아직 모르겠습니다ㅠㅠ
-</p>
+### router/router.jsx
 
-```
-Kimi 회고록)
-나만의 보일러 템플릿을 만들면서, 내가 왜 이런 폴더를 만들었었는지
-이런 파일명을 사용했는지 다시 한 번 되돌아보는 기회가 되었습니다.
-ex.그 전까지는 consts폴더도 아무런 생각 없이 만들었는데,
-이번에는 파일을 만들 때 어디에 넣을지, ui 라이브러리를 추가하면서도
-왜 이 폴더의 이 파일명으로 작명해야하는지 생각을 하면서 했습니다.
-eslint와 prettier 파일을 설정하면서 그 안의 속성들에 대해서
-다시 공부하였습니다.
-mui를 깔면서 저번에 mmm 프로젝트 할때도 만났던 오류를 만났는데,
-이번에도 해결을 하지 못해서 무지 화났습니다...
+```javascript
+import { createBrowserRouter } from 'react-router-dom';
+import HomePage from '../pages/Home';
+import PostListPage from '../pages/Post.List';
+import PostDetailPage from '../pages/Post.detail';
 
-
-Ann 회고록)
-금일 보일러 템플릿 만들기 과제중에서 파일만들기와 설치를 하였습니다.
-그간 사용하지 않았던 eslint, pettier를 해보려니 기억이 가물가물했습니다.
-이번 과제를 통해 다시 짚어가는 계기가 되었습니다.
-또한 보일러 템플릿을 처음에 들었을때는 어떤 의미 일까 고민을 많이 했는데
-페어분들과 하나씩 만들어가면서 쉽게 이해할 수 있었습니다.
-진행 과정 중 mui에서 진짜 생각치 못한 오류를 만났는데 해결이 안되더라구요..
-바로 전 주에 썼는데 같은 내용인데 사용한 적 없는 오류가 생겼고,
-구글링과 여러 방법을 사용했지만 쉽게 해결 되지 못하고 결국 다른 라이브러리로 사용하게되었습니다.
-
-Levi 회고록)
-평소에 코드를 작성할때 eslint와 prettier를 사용하지 않았는데 이번에
-보일러 템플릿을 만들면서 eslint, prettier를 사용해볼수 있어서 좋았습니다.
+export const router = createBrowserRouter([
+    { path: '/', element: <HomePage /> },
+    { path: '/posts', element: <PostListPage /> },
+    { path: '/post-detail/:postId', element: <PostDetailPage /> },
+]);
 ```
 
----
+### 💡리팩토링 내용
 
-[2023.12.27(수)]</br>
+-   App.jsx에서 관리하고 있던 router 로직을 분리하여 App.jsx에서 import해서 사용했습니다.
 
----프로젝트.....🥹---
+## 📌 재사용되는 값은 consts로 관리
 
----
+### consts/pageNation.jsx
 
-[2023.12.28(목)]</br>
-리액트 훅 폼을 사용하여 보다 편리하게 회원가입 로직을 만들수 있었던거 같습니다.
-
-```
-kimi 회고록)
-하나 해결하면 하나가 에러가나...
-useState와 연동을해야 될 거 같은데 모르겠다..
-다음페이지 랜더가되면 뒤로가기가안되고 뒤로가기가 되면 랜더가 된다 ^^
-useSearchParam 과 useEffect useState를 더 알아봐야겠다.
-onClick 이벤트 때문에 애먹었는데 ...rest로 내려줄수 없었다니 충격...(rin님이 알려주셨다😍)
-
-
-Ann 회고록)
-금일 RHF과 YUP 이 두가지 라이브러리를 사용해보았습니다
-유효성 검사하는 부분이 어렵지 않게 되어있어서 사용하기 어렵지 않았습니다.
-사용하면서 공식홈페이지에도 정리가 잘 되어있어서 보고 따라하기 쉬웠습니다.
- RHF과 YUP를 써보면서 YUP이 좀 더 가독성도 좋고 파일을 따로 분리해서 유지보수도
- 용이 할 것 같다 생각했습니다.
- 하지만 문제는 useSearchParam 부터 많이 막혔던 것 같습니다 오류도 많이나고
- 계획했던대로 이벤트가 일어나지 않아서 조금 혼란...
-
-Levi 회고록)
-
-
-
+```javascript
+export const LIMIT_TAKE = 10;
+export const LIMIT_PAGE = 10;
 ```
 
----
+### consts/queryKey.jsx
 
-[2023.12.29(금)]</br>
-
-(1) RHF를 사용했을 때의 장점에 대하여 정의하기
-(2) 만약 유효성 검사를 하지 않는 곳에서 RHF를 사용하는 것은 올바른 행위일까?
-(3) RHF에는 register 말고 contoller를 활용하는 방법이 있습니다. 두 방법의 차이는 무엇일까?
-
-\*
-react-hook-form 의 지속적인 업데이트와 더욱 빠른 마운트 속도 차이가 현재의 차이를 만들지 않았나 싶습니다.
-
-mode 옵션은 validation 전략을 설정하는 데 활용합니다. onSubmit, onChange, onBlur, all 등의 옵션이 있습니다. 주의해야 할 점은 mode 를 onChange(실시간) 에 놨을 때 다수의 리렌더링이 발생할 수 있어 성능에 영향을 끼칠 수 있다고 합니다.
-
-제어 컴포넌트로 폼을 다루기 위해서 하나하나 state 를 선언해주고, 해당 state 를 다루기 위해서 또 핸들링 함수를 만들어야 하고, 에러를 위한 state, 또 검증을 위한 함수.. 지금은 아주 단순한 validation check 만 했기 때문에 코드가 간소화 되었지만, 모든 유효성 검증을 한다면 코드는 더더욱 길어질 것입니다.
-
-rhf를 사용하지않을 시 코드의 길이도 문제지만, 또 다른 문제점이 있습니다. React 에서 컴포넌트 리랜더링이 발생하는 조건 중 하나는 state 의 값이 변했을 때 입니다. 현재 폼에선 모든 값이 state 로 연결되어 있으며 하나의 값이 변할때 마다 여러개의 자식 컴포넌트 들에서 무수히 많은 리랜더링이 발생합니다. 이는 개발자가 예측한 랜더링이 아닌, 불필요한 랜더링으로서 불필요한 연산으로 생각할 수 있습니다.
-
-여러분들은 이 단순한 폼을 처리하기 위해서 너무 많은 state 와 함수가 담겨져 있다고 생각하지 않나요?
-
-input 의 초기값은 undefined
-\*/
-
-```
-kimi 회고록)
-리팩토링이라는 것을 어떻게 하는지에 대해서 알게 되었습니다.
-어떻게 하면 데이터를 유지보수할 때 편한지(마지막 값 length주기)
-consts폴더에서 data값을 배열로 관리하여서 map돌리는 거도
-가독성도 좋고, 재사용할 수 있다는 장점을 알게 되었습니다.
-제가 pagination 할 때, 이상하게 시간을 쏟았던
-number나 string타입에 대한 정의들,(typeof 찍어서 알아보기..)
-useSearchParams에 대해서 제대로 알게되었습니다.
-제일 좋은 것은 직접 코드 쳐보기^^..!
-각 함수의 상세를 들어가서 객체의 타입을 어떻게 가져오면 좋은지
-참고하면서 진행하고 있는데, 좋은 거 같습니다.
-rhf와 yup에 대해서 알아보고 들어갔어야했는데,
-바빠서..진짜 바쁘했는데 아침에 시간을 낼 수 있었는데.. 잤습니다.
-잠을 줄여서 라이브러리 공부를 더 해야겠습니다.
-라이브러리 공식문서와 친해지기..ㅜㅜ!!
-=> 내일 무조건 라이브러리 공부에 2시간 쏟기..!
-
-
-Ann 회고록)
-useSearchParam에 대한 학습을 미리 하지 못해서 다른 페어분들이 먼저 사용한 로직을 이해하는데
-조금 어려웠던 것 같습니다 얼른 파악하고 오는걸로... 피넛님 덕분에 1:1 코칭 받아서 저희 로직은
-이해되었지만 앞으로 제가 사용하려면 제가 사용하면서 파악하는 걸로....
-아직 뒤로가기 데이터 유지가 남았는데 오늘 해결하지 못했습니다..
-내일은 꼭 마무리 되고 다음 과제로 넘어가면 되겠ㅠ
-
-
-Levi 회고록)
-
-
-
+```javascript
+export const QUERY_KEY = {
+    post: 'post',
+    posts: 'posts',
+    comments: 'comments',
+    weather: 'weather',
+};
 ```
 
----
+### 💡리팩토링 내용
 
-[2023.12.30(토)]</br>
+-   LIMIT_PAGE, LIMIT_TAKE 값은 pageNation에서 자주 재사용되는 값이므로 consts 폴더로 관리했습니다.
+-   react-query를 사용하여 msw 데이터를 호출할때 사용되는 query-key값 또한 자주 재사용되므로 consts 폴더로 관리했습니다.
 
-localStorage통해 데이터 저장. => 유지?
 
-todoList만들기
+## 📌 페이지네이션 네이션 파일은 하나로 정리해서 관리
 
-kimi 회고록)
-주제도 잘 모르고 그냥 todoList 만들기에 집중했던 거 같습니다
-강사님이 주신 문서를 제대로 읽고 해석하고,
-관심사분리에 대해서 조금 더 생각해보아야겠습니다.
-관심사분리란? 모듈화, 의존성주입, 유지보수하기 쉽게..!하는 것이고
-전역상태관리는 props-drilling이 일어날 때
-(부모가 자식을 몰라도되는 상태일 때) 사용하는 것입니다!
-조원들과 조금 더 주제를 집중적으로 회의하고 들어갔어야 했었습니다..😭
--> 이를 보충하기 위해 조원들과 내일 WIL들어가기 전에
-13시부터 관심사분리의 사례에 대해 토론해 보기로했습니다!!
+### 💡리팩토링 내용
+-   components/pagenation/Pagenation.Comment.jsx, components/pagenation/Pagenation.Post.jsx 폴더의 로직이 동일해서 components/Pagenation.jsx에서 하나로 관리했습니다.
 
-Ann 회고록)
-어제 구현하지 못했던 데이터유지를 이어서 해보았습니다
-낮에 혼자 useSearchParams 공부하고 다시 코드를 분석해보았는데
-한번 더 복습해보니 어제보다 코드가 더 잘 이해되긴했습니다!
-또한 저희가 아직 컨트롤러의 차이점을 분석하지 못했던 부분이 있어서 자료 찾아보고 적용해보게 되었는데
-개인적인 생각으로는 컨트롤러 < rhf < yup 순서대로 였던것 같아요 생각보다 이전에 적용한게 익숙했던건지!
-컨트롤러는 생각보다 살짝 조금 복잡한 것 같아요! 그렇다고 적용이 어려운건 아니였습니다!
-과제 todolist를 만들었는데 저희가 만든로직이 과제의 주제에 약간 어긋났던 걸 느꼈고
-피넛님께서 쏙쏙! 집어주셔서 관심사분리, 전역상태, 의존성주입 등 어떤 차이점이 어떤점이있는지  
-다시 생각할 수 있게 되었습니다.
-다음 날 모여서 다시 관심사분리에 대해 다시 이야기 해보기로 했습니다!
-그전까지 문서 참조자료 다시 복습하고 오기!
+## 📌 msw 데이터 관리
 
-Levi 회고록)
+### apis/api.jsx
 
----
+```javascript
+import axios from 'axios';
+import { weatherConfig } from '../third-party/weather.config';
+import { LIMIT_PAGE, LIMIT_TAKE } from '../consts/pageNation';
 
-[2023.12.31(일)]</br>
-refresh day!
+export const getPostDetailPost = async () => {
+    const response = await axios.get('/api/post');
+    return response.data;
+};
 
---------------------------------------------------
+export const getPaginationPost = async (params) => {
+    const response = await axios.get('/api/posts', {
+        params: {
+            page: params.get('page') ?? 1,
+            take: params.get('take') ?? LIMIT_TAKE,
+            limit: params.get('limit') ?? LIMIT_PAGE,
+        },
+    });
+    return response.data;
+};
 
-[2024.1.1(일)]</br>
+export const getPaginationComment = async (params) => {
+    const response = await axios.get('/api/comments', {
+        params: {
+            page: params.get('page') ?? 1,
+            take: params.get('take') ?? LIMIT_TAKE,
+            limit: params.get('limit') ?? LIMIT_PAGE,
+        },
+    });
+    return response.data;
+};
 
-<스파게티 코드 리팩토링 목록>
-- 페이지네이션 Pagenation.Comment(댓글보기 시), Pagenation.Post 중복 ❓ -- 작명 유의해서 하기..😭😇
-- pages하위 파일 3개 localStorage 로직 중복 -> 관심사 분리 ✅
-- router 설정 ✅
-- 상수로 limit, queryKey 관리 ✅
-- apis 관련폴더 생성 후 관리하기 => react-query ✅
-- Dialog Modal ❓
-- 댓글 보기 숨기기 ✅
-- 리액트쿼리.. 전역상태관리.. contexts?? -> ❓
-
-알게된점 
-- localstorage return 값 없으면 getItem 못한다^^ 
-- useQuery.. {data: }..
-
+export const getWeather = async () => {
+    try {
+        const response = await axios.get('/getUltraSrtNcst', {
+            baseURL: weatherConfig.api,
+            params: {
+                serviceKey: weatherConfig.secret_key,
+                dataType: 'JSON',
+                base_date: new Date().toISOString().substring(0, 10).replace(/-/g, ''),
+                base_time: '0600',
+                nx: 60,
+                ny: 127,
+            },
+        });
+        return response.data;
+    } catch (err) {
+        console.log(err);
+        throw new Error('failed load weather api');
+    }
+};
 ```
 
-kimi 회고록)
-위의 것들을 해결하면서, ReactQuery에 대해서 써볼 수 있었습니다.
-App.js에서 provider로 감싸는 거 부터 queryKey 가져오고 상수로 관리하는 거 까지
-좀 너무 많은 정보가 들어와서 정신이 없지만, 다시 보면서 차근차근 이해해보려고 노력하면
-다음에 더 잘 쓸 수 있을 거 같습니다.
-처음에는 어디서부터 손대야하나 너무너무 막막했는데,,,
-reactQuery로 관리하면서 코드가 깔끔해지니까 이 맛에 리팩토링 하는구나 싶었습니다.
-저도 css 매우매우 건들고 싶은데, 건들였다가 전에 하는 시간이 두 배로 길어진 기억이 있어서,,,
-차마 리팩토링에는 손을 못대겠어.......(흐린 눈🙄)
+### components/Pagenation.jsx
 
-
-
-Ann 회고록)
-스파게티 코드 리팩토링을 해보았습니다. 코드 분석을 해보면서 react-query를 활용해보면서
-다음에 더 잘 사용할 수 있을 것 같은 점을 느꼈습니다
-localstorage도 한번씩 사용해봤지만 늘 버벅되는 부분이 많았는데 역시 사용해보니 훨씬 이해가 잘됐습니다.
-리팩토링을 해보면서 그때그때 관심사분리나 전역상태를 해야겠다! 하면서 같이 찾아내는 부분이 
-코드가 짧아지는게 눈에 보이니까 조금...조금 재밌었습니다..
-css 솔직히 좀 해보고싶은데... 지금 제 코가석자라..로직 이해도 벅촤..
-
-
+```javascript
+const { data: postData } = useQuery([QUERY_KEY.posts, params.get('page')], () => getPaginationPost(params));
+const pageNationData = postData?.PageNation;
 ```
+
+### pages/Home.jsx
+
+```javascript
+const { data: weatherData } = useQuery([QUERY_KEY.weather], () => getWeather());
+```
+
+### pages/Post.Detail.jsx
+
+```javascript
+const { data: postDetailData } = useQuery([QUERY_KEY.post], () => getPostDetailPost());
+const { data: commentData } = useQuery([QUERY_KEY.comments, params.get('page')], () => getPaginationComment(params));
+const paginationCommentData = commentData?.Comments;
+```
+
+### pages/Post.List.jsx
+
+```javascript
+const { data: postData } = useQuery([QUERY_KEY.posts, params.get('page')], () => getPaginationPost(params));
+const paginationPostData = postData?.Posts;
+```
+
+### 💡리팩토링 내용
+
+-   api와 관련된 로직은 api폴더에서 관리했습니다.
+-   api 호출 함수(Post 로직)에 params 값을 전달하여 데이터를 호출하면 {PageNation:,Posts:} 형식으로 나오는데 이때 PageNation 값은 pagenation 폴더에서 Posts 값은 pages 폴더에서 사용했습니다.
+-   api 호출 함수(Comment 로직)에 params 값을 전달하여 데이터를 호출하면 {PageNation:,Comments:} 형식으로 나오는데 이때 PageNation 값은 pagenation 폴더에서 Comments 값은 pages 폴더에서 사용했습니다.
+
+## 📌 state를 이용한 자주 사용하는 로직은 hooks로 관리
+
+### hooks/useDiaLog.jsx
+
+```javascript
+import { DialLogState, useDiaLogStore } from '../contexts/DialogProvider';
+
+const useDiaLog = () => {
+    const [, setDiaLogAttribute] = useDiaLogStore();
+
+    // home page
+    const onPressNavigateBlog = () => {
+        setDiaLogAttribute({
+            type: DialLogState.ALERT,
+            text: '정말로 페이지를 이동하겠습니까',
+            isOpen: true,
+            onConfirm: async () => {
+                await setDiaLogAttribute({ isOpen: false });
+                window.location.href = '/posts';
+            },
+        });
+    };
+
+    // postList page
+    const onClickPost = async (postId) => {
+        await setDiaLogAttribute({
+            type: DialLogState.CONFIRM,
+            text: '정말로 페이지를 이동하겠습니까',
+            isOpen: true,
+            onConfirm: async () => {
+                await setDiaLogAttribute({
+                    text: '정말로 이동해버린다요!',
+                    onConfirm: async () => {
+                        window.location.href = `/post-detail/${postId}`;
+                    },
+                });
+            },
+            onCancel: () => {
+                setDiaLogAttribute({ isOpen: false });
+            },
+        });
+    };
+    return { onPressNavigateBlog, onClickPost };
+};
+
+export default useDiaLog;
+```
+
+### hooks/useShowModal.jsx
+
+```javascript
+import { useState } from 'react';
+
+const useShowModal = () => {
+    const [isOpenCommentList, setIsOpenCommentList] = useState(false);
+
+    const onClickCommentsBtn = async () => {
+        setIsOpenCommentList((prev) => !prev);
+    };
+
+    return { isOpenCommentList, onClickCommentsBtn };
+};
+
+export default useShowModal;
+```
+
+### 💡리팩토링 내용
+
+-   context를 통해 dialog와 관련된 상태를 전역적으로 관리하고 있지만 이 상태를 사용하는 함수는 여러 파일에서 사용되고 있습니다.
+-   전역적으로 관리되고 있는 dialog와 관련된 상태를 사용하는 함수를 useDiaLog custom hook으로 만들어 필요할때 import 해서 사용할 수 있도록 추가했습니다.
+-   댓글창을 열고 닫을 수 있는 로직인 useShowModal은 해당 코드에서는 재사용되고 있지 않지만 단순히 모달창을 열고 닫는 로직은 자주 재사용될수 있다고 생각하여 custom hook으로 분리했습니다.
+
+## 📌 localStorage와 관련된 로직은 묶어서 관리
+
+### repository/userNameRepository.jsx
+
+```javascript
+const USER_NAME = 'useName';
+
+export const userNameRepository = {
+    getUserName() {
+        return localStorage.getItem(USER_NAME);
+    },
+
+    setUserName(userName) {
+        localStorage.setItem(USER_NAME, userName);
+    },
+};
+```
+
+### 💡리팩토링 내용
+
+-   localStorage를 통해 데이터 값을 가져오는 로직이나 localStorage에 있는 값을 변경하는 로직은 자주 재사용되므로 repository 폴더에서 하나의 객체로 관리했습니다.
+
+## 📌 private router에 관련된 로직은 util 함수로 관리
+
+### utils/privateRouter.jsx
+
+```javascript
+import { userNameRepository } from '../repository/userNameRepository';
+
+const privateRouter = () => {
+    const userName = userNameRepository.getUserName();
+    if (!userName) {
+        alert('로그인이 필요합니다');
+        window.location.href = '/';
+    }
+};
+
+export default privateRouter;
+```
+
+### 💡리팩토링 내용
+
+-   localStorage에 데이터가 없을때 홈페이지로 되돌아가는 private Router와 관련된 함수는 로그인 페이지가 아닌 모든 페이지에서 재사용되지만 state를 사용하고 있지 않기 때문에 utils 폴더에서 관리했습니다.
+
+## 📌 style은 한 곳에서 관리
+
+### pages/style.jsx
+
+```javascript
+import styled from 'styled-components';
+
+const BlurBackGround = styled.div`
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 9999;
+    backdrop-filter: blur(10px);
+`;
+
+const UserNameForm = styled.form`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+`;
+
+const Button = styled.button``;
+
+export const S = {
+    BlurBackGround,
+    UserNameForm,
+    Button,
+};
+```
+
+### 💡리팩토링 내용
+
+-   style 관련 로직을 page에서 components에서 같이 사용하게 되면 코드가 길어지고 가독성이 떨어지므로 style 폴더를 만들어서 관리했습니다.
